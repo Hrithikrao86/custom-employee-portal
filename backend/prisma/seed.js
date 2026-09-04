@@ -113,29 +113,77 @@ async function main() {
   }
 
   // Assign Admin role to our existing admin user
-  const user = await prisma.user.findUnique({
-    where: {
+    // Create demo users
+  const demoUsers = [
+    {
+      name: "Admin User",
       email: "admin@example.com",
+      password: "Admin@123",
+      role: admin,
     },
-  });
+    {
+      name: "HR User",
+      email: "hr@example.com",
+      password: "HR@123",
+      role: hr,
+    },
+    {
+      name: "Sales User",
+      email: "sales@example.com",
+      password: "Sales@123",
+      role: sales,
+    },
+    {
+      name: "Support User",
+      email: "support@example.com",
+      password: "Support@123",
+      role: support,
+    },
+    {
+      name: "Finance User",
+      email: "finance@example.com",
+      password: "Finance@123",
+      role: finance,
+    },
+  ];
 
-  if (user) {
+  for (const demoUser of demoUsers) {
+    const passwordHash = await bcrypt.hash(demoUser.password, 10);
+
+    const user = await prisma.user.upsert({
+      where: {
+        email: demoUser.email,
+      },
+      update: {
+        name: demoUser.name,
+        passwordHash,
+        isActive: true,
+      },
+      create: {
+        name: demoUser.name,
+        email: demoUser.email,
+        passwordHash,
+        isActive: true,
+      },
+    });
+
     await prisma.userRole.upsert({
       where: {
         userId_roleId: {
           userId: user.id,
-          roleId: admin.id,
+          roleId: demoUser.role.id,
         },
       },
       update: {},
       create: {
         userId: user.id,
-        roleId: admin.id,
+        roleId: demoUser.role.id,
       },
     });
   }
 
   console.log("RBAC seed completed successfully.");
+    console.log("Demo users created successfully.");
 }
 
 main()
