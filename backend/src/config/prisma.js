@@ -1,14 +1,10 @@
 require("dotenv").config();
 
-const { PrismaMariaDb } = require("@prisma/adapter-mariadb");
+const { PrismaPg } = require("@prisma/adapter-pg");
 const { PrismaClient } = require("@prisma/client");
 
-const adapter = new PrismaMariaDb({
-  host: "localhost",
-  user: "root",
-  password: process.env.DB_PASSWORD,
-  database: "employee_portal",
-  connectionLimit: 5,
+const adapter = new PrismaPg({
+  connectionString: process.env.DATABASE_URL,
 });
 
 const prisma = new PrismaClient({ adapter });
