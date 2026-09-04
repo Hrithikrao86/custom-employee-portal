@@ -161,7 +161,7 @@ export default function Dashboard({ onAdmin }) {
                           : "pending-badge"
                       }
                     >
-                      {service.available ? "Connected" : "Authorized"}
+                      {service.available ? "Access Granted" : "Access Granted"}
                     </span>
                   </div>
 
