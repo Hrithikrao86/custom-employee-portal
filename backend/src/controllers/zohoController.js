@@ -11,6 +11,18 @@ const zohoRequest = async (url, res, service) => {
       },
     });
 
+    // Zoho can return HTTP 200 while reporting an API-level error
+    if (
+      response.data?.response?.status === 1 ||
+      response.data?.response?.errors
+    ) {
+      return res.status(502).json({
+        message: `Failed to connect to ${service}`,
+        service,
+        data: response.data,
+      });
+    }
+
     res.json({
       service,
       data: response.data,
